@@ -1,0 +1,444 @@
+windows 时长：1分钟
+
+串行化GC
+java -Xmx512m -Xms512m -XX:+UseSerialGC GCLogAnalysis
+执行结束!共生成对象次数:509390
+java -Xmx1g -Xms1g -XX:+UseSerialGC GCLogAnalysis
+执行结束!共生成对象次数:1162555
+java -Xmx2g -Xms2g -XX:+UseSerialGC GCLogAnalysis
+执行结束!共生成对象次数:1312348
+java -Xmx4g -Xms4g -XX:+UseSerialGC GCLogAnalysis
+执行结束!共生成对象次数:1349208
+java -Xmx6g -Xms6g -XX:+UseSerialGC GCLogAnalysis
+执行结束!共生成对象次数:1385130
+java -Xmx8g -Xms8g -XX:+UseSerialGC GCLogAnalysis
+执行结束!共生成对象次数:873639
+java -Xmx10g -Xms10g -XX:+UseSerialGC GCLogAnalysis
+执行结束!共生成对象次数:1612052
+java -Xmx12g -Xms12g -XX:+UseSerialGC GCLogAnalysis
+执行结束!共生成对象次数:1587688
+
+并行GC
+java -Xmx512m -Xms512m -XX:+UseParallelGC GCLogAnalysis
+执行结束!共生成对象次数:158218
+java -Xmx1g -Xms1g -XX:+UseParallelGC GCLogAnalysis
+执行结束!共生成对象次数:1008827
+java -Xmx2g -Xms2g -XX:+UseParallelGC GCLogAnalysis
+执行结束!共生成对象次数:1220593
+java -Xmx4g -Xms4g -XX:+UseParallelGC GCLogAnalysis
+执行结束!共生成对象次数:1366849
+java -Xmx6g -Xms6g -XX:+UseParallelGC GCLogAnalysis
+执行结束!共生成对象次数:1472056
+java -Xmx8g -Xms8g -XX:+UseParallelGC GCLogAnalysis
+执行结束!共生成对象次数:1547744
+java -Xmx10g -Xms10g -XX:+UseParallelGC GCLogAnalysis
+执行结束!共生成对象次数:1630741
+java -Xmx12g -Xms12g -XX:+UseParallelGC GCLogAnalysis
+执行结束!共生成对象次数:1690815
+
+CMS+ParNew
+java -Xmx512m -Xms512m -XX:+UseConcMarkSweepGC GCLogAnalysis
+执行结束!共生成对象次数:423546
+java -Xmx1g -Xms1g -XX:+UseConcMarkSweepGC GCLogAnalysis
+执行结束!共生成对象次数:1100005
+java -Xmx2g -Xms2g -XX:+UseConcMarkSweepGC GCLogAnalysis
+执行结束!共生成对象次数:1223348
+java -Xmx4g -Xms4g -XX:+UseConcMarkSweepGC GCLogAnalysis
+执行结束!共生成对象次数:1167311
+java -Xmx6g -Xms6g -XX:+UseConcMarkSweepGC GCLogAnalysis
+执行结束!共生成对象次数:1116529
+java -Xmx8g -Xms8g -XX:+UseConcMarkSweepGC GCLogAnalysis
+执行结束!共生成对象次数:978425
+java -Xmx10g -Xms10g -XX:+UseConcMarkSweepGC GCLogAnalysis
+执行结束!共生成对象次数:518979
+
+java -Xmx10g -Xms10g -XX:+UseConcMarkSweepGC -XX:ParallelCMSThreads=6 GCLogAnalysis
+执行结束!共生成对象次数:1042005
+
+java -Xmx12g -Xms12g -XX:+UseConcMarkSweepGC GCLogAnalysis
+执行结束!共生成对象次数:592163
+
+G1
+java -Xmx512m -Xms512m -XX:+UseG1GC GCLogAnalysis
+执行结束!共生成对象次数:234917
+java -Xmx1g -Xms1g -XX:+UseG1GC GCLogAnalysis
+执行结束!共生成对象次数:971709
+java -Xmx2g -Xms2g -XX:+UseG1GC GCLogAnalysis
+执行结束!共生成对象次数:1095407
+java -Xmx4g -Xms4g -XX:+UseG1GC GCLogAnalysis
+执行结束!共生成对象次数:1379879
+java -Xmx6g -Xms6g -XX:+UseG1GC GCLogAnalysis
+执行结束!共生成对象次数:1547454
+java -Xmx8g -Xms8g -XX:+UseG1GC GCLogAnalysis
+执行结束!共生成对象次数:1613057
+java -Xmx10g -Xms10g -XX:+UseG1GC GCLogAnalysis
+执行结束!共生成对象次数:1549847
+java -Xmx12g -Xms12g -XX:+UseG1GC GCLogAnalysis
+执行结束!共生成对象次数:1551206
+
+上述是windows平台下8核16G 不同GC，设置不同内存默认参数下1分钟内生成对象次数统计
+由上述统计得出结论（仅限当前系统，且在GC参数默认的情况下）
+1、相同GC受堆内存大小的变化，吞吐量会有一定的变化
+2、上述GC会随着堆内存的增大大，吞吐量会先增大后降低
+3、在堆内存512m时，Serial、CMS明显表现更好，在堆内存1g-12g,G1和Parallel表现相差不多
+
+G1 日志分析
+java -Xmx512m -Xms512m -XX:+UseG1GC -XX:+PrintGCDetails -XX:+PrintGCDateStamps GCLogAnalysis
+GC 时间：Full GC ： 29 sec 340 ms   Concurrent Mark ：4 sec 491 ms  Mixed ：440 ms Young GC ：200 ms initial-mark ：100 ms Remark ：10.0 ms 
+         total : 34 sec 581 ms
+		
+可以发现G1在512内存下 1分钟的执行中 34 sec 581 ms 在进行GC
+
+GC发生的时间、G1 的“转移暂停: 混合模式”，停顿了约2.7ms
+2021-01-22T15:57:34.631+0800: 1.116: [GC pause (G1 Evacuation Pause) (mixed), 0.0027905 secs]
+8个Workers执行 消耗了 1.8ms   
+   [Parallel Time: 1.8 ms, GC Workers: 8]
+      Diff：这个值越小越好，代表了每个线程的速度都很平均
+      [GC Worker Start (ms): Min: 1115.7, Avg: 1115.7, Max: 1115.7, Diff: 0.1]
+	  外部根区扫描，外部根是堆外区。JNI 引用，JVM 系统目录，Classloaders 等
+      [Ext Root Scanning (ms): Min: 0.1, Avg: 0.1, Max: 0.1, Diff: 0.1, Sum: 0.9]
+	  更新 RSet 的时间信息
+      [Update RS (ms): Min: 0.4, Avg: 0.4, Max: 0.5, Diff: 0.1, Sum: 3.5]
+         [Processed Buffers: Min: 5, Avg: 6.1, Max: 7, Diff: 2, Sum: 49]
+      [Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+	  
+      [Code Root Scanning (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+	  该任务主要是对 CSet 中存活对象进行转移（复制）
+      [Object Copy (ms): Min: 0.9, Avg: 0.9, Max: 1.0, Diff: 0.1, Sum: 7.3]
+	  
+      [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.1, Diff: 0.1, Sum: 0.2]
+         [Termination Attempts: Min: 1, Avg: 1.0, Max: 1, Diff: 0, Sum: 8]
+	  花在 GC 之外的工作线程的时间
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+	  并行阶段的 GC 总时间
+      [GC Worker Total (ms): Min: 1.5, Avg: 1.5, Max: 1.5, Diff: 0.1, Sum: 12.0]
+      [GC Worker End (ms): Min: 1117.2, Avg: 1117.2, Max: 1117.2, Diff: 0.0]
+   [Code Root Fixup: 0.0 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 0.2 ms]
+   表示其他清理活动
+   [Other: 0.7 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 0.2 ms]
+      [Ref Enq: 0.0 ms]
+      [Redirty Cards: 0.3 ms]
+      [Humongous Register: 0.1 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.0 ms]
+	表示收集结果统计
+   [Eden: 21.0M(21.0M)->0.0B(21.0M) Survivors: 4096.0K->4096.0K Heap: 372.0M(512.0M)->347.4M(512.0M)]
+   表示收集花费的时间
+ [Times: user=0.00 sys=0.00, real=0.00 secs] 
+ 
+ 
+java -Xmx512m -Xms512m -XX:+UseSerialGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:./sergc.log  GCLogAnalysis
+ 
+1、2021-01-22T16:28:46.412+0800: 0.188: [GC (Allocation Failure) 2021-01-22T16:28:46.412+0800: 0.189: [DefNew: 139776K->17471K(157248K), 0.0220548 secs] 139776K->44635K(506816K), 0.0222595 secs] [Times: user=0.02 sys=0.00, real=0.02 secs] 
+2、2021-01-22T16:28:46.453+0800: 0.230: [GC (Allocation Failure) 2021-01-22T16:28:46.453+0800: 0.230: [DefNew: 157247K->17472K(157248K), 0.0319343 secs] 184411K->94718K(506816K), 0.0320061 secs] [Times: user=0.02 sys=0.02, real=0.03 secs] 
+3、2021-01-22T16:28:46.500+0800: 0.278: [GC (Allocation Failure) 2021-01-22T16:28:46.500+0800: 0.278: [DefNew: 157248K->17471K(157248K), 0.0248873 secs] 234494K->143812K(506816K), 0.0249761 secs] [Times: user=0.03 sys=0.00, real=0.03 secs] 
+2021-01-22T16:28:46.543+0800: 0.320: [GC (Allocation Failure) 2021-01-22T16:28:46.543+0800: 0.320: [DefNew: 157247K->17471K(157248K), 0.0231572 secs] 283588K->189842K(506816K), 0.0232299 secs] [Times: user=0.02 sys=0.02, real=0.02 secs] 
+2021-01-22T16:28:46.583+0800: 0.360: [GC (Allocation Failure) 2021-01-22T16:28:46.584+0800: 0.360: [DefNew: 157247K->17472K(157248K), 0.0257484 secs] 329618K->239547K(506816K), 0.0258382 secs] [Times: user=0.02 sys=0.00, real=0.03 secs] 
+2021-01-22T16:28:46.626+0800: 0.403: [GC (Allocation Failure) 2021-01-22T16:28:46.626+0800: 0.403: [DefNew: 157248K->17472K(157248K), 0.0242746 secs] 379323K->284351K(506816K), 0.0243721 secs] [Times: user=0.01 sys=0.02, real=0.03 secs] 
+2021-01-22T16:28:46.668+0800: 0.445: [GC (Allocation Failure) 2021-01-22T16:28:46.668+0800: 0.445: [DefNew: 157248K->17471K(157248K), 0.0235077 secs] 424127K->330597K(506816K), 0.0235825 secs] [Times: user=0.00 sys=0.03, real=0.02 secs] 
+2021-01-22T16:28:46.707+0800: 0.484: [GC (Allocation Failure) 2021-01-22T16:28:46.707+0800: 0.484: [DefNew: 157247K->157247K(157248K), 0.0000199 secs]2021-01-22T16:28:46.707+0800: 0.484: [Tenured: 313126K->273955K(349568K), 0.0295705 secs] 470373K->273955K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0296908 secs] [Times: user=0.02 sys=0.00, real=0.03 secs] 
+2021-01-22T16:28:46.753+0800: 0.529: [GC (Allocation Failure) 2021-01-22T16:28:46.753+0800: 0.529: [DefNew: 139776K->17472K(157248K), 0.0056162 secs] 413731K->320138K(506816K), 0.0057013 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+2021-01-22T16:28:46.774+0800: 0.550: [GC (Allocation Failure) 2021-01-22T16:28:46.774+0800: 0.550: [DefNew: 157248K->157248K(157248K), 0.0000263 secs]2021-01-22T16:28:46.774+0800: 0.550: [Tenured: 302666K->299399K(349568K), 0.0318948 secs] 459914K->299399K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0320186 secs] [Times: user=0.03 sys=0.00, real=0.03 secs] 
+2021-01-22T16:28:46.820+0800: 0.598: [GC (Allocation Failure) 2021-01-22T16:28:46.820+0800: 0.598: [DefNew: 139776K->17471K(157248K), 0.0097336 secs] 439175K->343421K(506816K), 0.0098095 secs] [Times: user=0.00 sys=0.00, real=0.01 secs] 
+2021-01-22T16:28:46.845+0800: 0.622: [GC (Allocation Failure) 2021-01-22T16:28:46.845+0800: 0.622: [DefNew: 157247K->157247K(157248K), 0.0000207 secs]2021-01-22T16:28:46.845+0800: 0.622: [Tenured: 325949K->321462K(349568K), 0.0358034 secs] 483197K->321462K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0359293 secs] [Times: user=0.05 sys=0.00, real=0.04 secs] 
+2021-01-22T16:28:46.897+0800: 0.674: [GC (Allocation Failure) 2021-01-22T16:28:46.897+0800: 0.674: [DefNew: 139776K->139776K(157248K), 0.0000200 secs]2021-01-22T16:28:46.897+0800: 0.674: [Tenured: 321462K->309423K(349568K), 0.0360170 secs] 461238K->309423K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0361253 secs] [Times: user=0.03 sys=0.00, real=0.04 secs] 
+2021-01-22T16:28:46.950+0800: 0.727: [GC (Allocation Failure) 2021-01-22T16:28:46.950+0800: 0.727: [DefNew: 139776K->139776K(157248K), 0.0000227 secs]2021-01-22T16:28:46.950+0800: 0.727: [Tenured: 309423K->338208K(349568K), 0.0309799 secs] 449199K->338208K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0311210 secs] [Times: user=0.03 sys=0.00, real=0.03 secs] 
+2021-01-22T16:28:46.997+0800: 0.774: [GC (Allocation Failure) 2021-01-22T16:28:46.997+0800: 0.774: [DefNew: 139776K->139776K(157248K), 0.0000201 secs]2021-01-22T16:28:46.997+0800: 0.774: [Tenured: 338208K->340606K(349568K), 0.0340367 secs] 477984K->340606K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0341439 secs] [Times: user=0.03 sys=0.00, real=0.04 secs] 
+2021-01-22T16:28:47.048+0800: 0.825: [GC (Allocation Failure) 2021-01-22T16:28:47.048+0800: 0.825: [DefNew: 139776K->139776K(157248K), 0.0000200 secs]2021-01-22T16:28:47.048+0800: 0.825: [Tenured: 340606K->344374K(349568K), 0.0370339 secs] 480382K->344374K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0371721 secs] [Times: user=0.05 sys=0.00, real=0.04 secs] 
+2021-01-22T16:28:47.101+0800: 0.878: [GC (Allocation Failure) 2021-01-22T16:28:47.101+0800: 0.878: [DefNew: 139776K->139776K(157248K), 0.0000206 secs]2021-01-22T16:28:47.101+0800: 0.878: [Tenured: 344374K->328638K(349568K), 0.0389214 secs] 484150K->328638K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0390379 secs] [Times: user=0.03 sys=0.00, real=0.04 secs] 
+2021-01-22T16:28:47.157+0800: 0.933: [GC (Allocation Failure) 2021-01-22T16:28:47.157+0800: 0.933: [DefNew: 139644K->139644K(157248K), 0.0000202 secs]2021-01-22T16:28:47.157+0800: 0.933: [Tenured: 328638K->349096K(349568K), 0.0283404 secs] 468282K->351896K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0284487 secs] [Times: user=0.03 sys=0.00, real=0.03 secs] 
+2021-01-22T16:28:47.203+0800: 0.980: [Full GC (Allocation Failure) 2021-01-22T16:28:47.203+0800: 0.980: [Tenured: 349414K->349336K(349568K), 0.0396338 secs] 506366K->358899K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0397199 secs] [Times: user=0.05 sys=0.00, real=0.04 secs] 
+2021-01-22T16:28:47.261+0800: 1.039: [Full GC (Allocation Failure) 2021-01-22T16:28:47.261+0800: 1.039: [Tenured: 349336K->349416K(349568K), 0.0383251 secs] 506497K->360325K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0384031 secs] [Times: user=0.05 sys=0.00, real=0.04 secs] 
+2021-01-22T16:28:47.318+0800: 1.095: [Full GC (Allocation Failure) 2021-01-22T16:28:47.318+0800: 1.095: [Tenured: 349557K->345928K(349568K), 0.0407623 secs] 506795K->345928K(506816K), [Metaspace: 2628K->2628K(1056768K)], 0.0408563 secs] [Times: user=0.03 sys=0.00, real=0.04 secs] 
+1、对象分配速率：136.5/0.18 ~= 758.3 MB/secs  对象提升速率 26.5/0.18 = 147.2 MB/secs
+2、对象分配速率：153.5/0.04 ~= 3825 MB/secs 对象提升速率 75.2/0.04 = 1880.3 MB/secs
+3、对象分配速率：3839 MB/secs 对象提升速率 75.2/0.04 = 3084 MB/secs
+old : 341 MB 
+young : 153 MB
+
+1、通过计算对象分配速率，我们可以预测Minor GC的频率，当我们需要降低Minor GC频率的时候可以适当调大Eden区的大小，当然随着内存增大不同gc的STW时间,也会受到影响。所以具体的调整还是需要根据业务需求测试
+2、对象提升速率会影响影响 major GC 的频率
+3、根据上面1、2、3次的对象分配速率、对象提升速率的计算结果，我们可以发现 对象提升速率 在逐渐趋近于 对象分配速率。
+且短时间内发生大量的Full GC,每次Full GC之后老年代的回收效率不高。分析原因，可能存在对象的过早提升
+
+
+
+
+ java -jar -Xmx1g -Xms1g  -XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:-UseAdaptiveSizePolicy .\gateway-server-0.0.1-SNAPSHOT.jar
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.0.4.RELEASE)
+
+2021-01-22T17:29:57.396+0800: [GC (Allocation Failure) 2021-01-22T17:29:57.397+0800: [ParNew: 279616K->15223K(314560K), 0.0141735 secs] 279616K->15223K(1013632K), 0.0146638 secs] [Times: user=0.13 sys=0.00, real=0.02 secs]
+2021-01-22T17:29:57.412+0800: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(699072K)] 15223K(1013632K), 0.0020282 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+2021-01-22T17:29:57.414+0800: [CMS-concurrent-mark-start]
+2021-01-22T17:29:57.417+0800: [CMS-concurrent-mark: 0.000/0.000 secs] [Times: user=0.11 sys=0.00, real=0.00 secs]
+2021-01-22T17:29:57.418+0800: [CMS-concurrent-preclean-start]
+2021-01-22T17:29:57.426+0800: [CMS-concurrent-preclean: 0.001/0.001 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+2021-01-22T17:29:57.427+0800: [CMS-concurrent-abortable-preclean-start]
+2021-01-22T17:29:58.283+0800: [CMS-concurrent-abortable-preclean: 0.587/0.855 secs] [Times: user=3.61 sys=0.22, real=0.86 secs]
+2021-01-22T17:29:58.284+0800: [GC (CMS Final Remark) [YG occupancy: 157695 K (314560 K)]2021-01-22T17:29:58.284+0800: [Rescan (parallel) , 0.0099957 secs]2021-01-22T17:29:58.295+0800: [weak refs processing, 0.0001239 secs]2021-01-22T17:29:58.302+0800: [class unloading, 0.0037832 secs]2021-01-22T17:29:58.306+0800: [scrub symbol table, 0.0025635 secs]2021-01-22T17:29:58.309+0800: [scrub string table, 0.0002930 secs][1 CMS-remark: 0K(699072K)] 157695K(1013632K), 0.0264666 secs] [Times: user=0.14 sys=0.00, real=0.03 secs]
+2021-01-22T17:29:58.310+0800: [CMS-concurrent-sweep-start]
+2021-01-22T17:29:58.319+0800: [CMS-concurrent-sweep: 0.000/0.000 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+2021-01-22T17:29:58.320+0800: [CMS-concurrent-reset-start]
+2021-01-22T17:29:58.331+0800: [CMS-concurrent-reset: 0.005/0.005 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]
+2021-01-22T17:30:00.055+0800: [GC (Allocation Failure) 2021-01-22T17:30:00.055+0800: [ParNew: 294839K->24014K(314560K), 0.0148029 secs] 294839K->24014K(1013632K), 0.0153186 secs] [Times: user=0.09 sys=0.03, real=0.01 secs]
+2021-01-22T17:32:47.461+0800: [GC (Allocation Failure) 2021-01-22T17:32:47.461+0800: [ParNew: 303630K->22081K(314560K), 0.0283805 secs] 303630K->27493K(1013632K), 0.0289177 secs] [Times: user=0.17 sys=0.00, real=0.03 secs]
+2021-01-22T17:32:50.542+0800: [GC (Allocation Failure) 2021-01-22T17:32:50.542+0800: [ParNew: 301697K->24838K(314560K), 0.0094033 secs] 307109K->30250K(1013632K), 0.0097839 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+2021-01-22T17:32:53.013+0800: [GC (Allocation Failure) 2021-01-22T17:32:53.013+0800: [ParNew: 304454K->25523K(314560K), 0.0083044 secs] 309866K->30935K(1013632K), 0.0087606 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+2021-01-22T17:32:55.251+0800: [GC (Allocation Failure) 2021-01-22T17:32:55.252+0800: [ParNew: 305139K->23714K(314560K), 0.0079179 secs] 310551K->29127K(1013632K), 0.0083142 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+2021-01-22T17:32:57.776+0800: [GC (Allocation Failure) 2021-01-22T17:32:57.776+0800: [ParNew: 303330K->23758K(314560K), 0.0083234 secs] 308743K->29170K(1013632K), 0.0086964 secs] [Times: user=0.02 sys=0.00, real=0.01 secs]
+
+
+Requests per second:    3552.67 [#/sec]
+
+
+
+
+
+java -jar -Xmx1g -Xms1g  -XX:+UseSerialGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:-UseAdaptiveSizePolicy .\gateway-server-0.0.1-SNAPSHOT.jar
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.0.4.RELEASE)
+
+2021-01-22T17:34:22.517+0800: [Full GC (Metadata GC Threshold) 2021-01-22T17:34:22.517+0800: [Tenured: 0K->14519K(699072K), 0.0663630 secs] 251753K->14519K(1013632K), [Metaspace: 20422K->20422K(1067008K)], 0.0677174 secs] [Times: user=0.08 sys=0.01, real=0.07 secs]
+2021-01-22T17:34:25.034+0800: [GC (Allocation Failure) 2021-01-22T17:34:25.034+0800: [DefNew: 279616K->15988K(314560K), 0.0372703 secs] 294135K->30507K(1013632K), 0.0379204 secs] [Times: user=0.03 sys=0.02, real=0.04 secs]
+2021-01-22T17:34:34.938+0800: [Full GC (Metadata GC Threshold) 2021-01-22T17:34:34.938+0800: [Tenured: 14519K->27083K(699072K), 0.0699659 secs] 179735K->27083K(1013632K), [Metaspace: 33837K->33837K(1079296K)], 0.0705757 secs] [Times: user=0.06 sys=0.00, real=0.07 secs]
+2021-01-22T17:34:38.234+0800: [GC (Allocation Failure) 2021-01-22T17:34:38.234+0800: [DefNew: 279616K->5240K(314560K), 0.0103504 secs] 306699K->32323K(1013632K), 0.0108400 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+2021-01-22T17:34:41.305+0800: [GC (Allocation Failure) 2021-01-22T17:34:41.305+0800: [DefNew: 284856K->4739K(314560K), 0.0047328 secs] 311939K->31822K(1013632K), 0.0051248 secs] [Times: user=0.03 sys=0.00, real=0.00 secs]
+2021-01-22T17:34:43.670+0800: [GC (Allocation Failure) 2021-01-22T17:34:43.670+0800: [DefNew: 284355K->4713K(314560K), 0.0051472 secs] 311438K->31796K(1013632K), 0.0055269 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+2021-01-22T17:34:45.984+0800: [GC (Allocation Failure) 2021-01-22T17:34:45.984+0800: [DefNew: 284329K->4713K(314560K), 0.0046154 secs] 311412K->31796K(1013632K), 0.0049749 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]
+2021-01-22T17:34:48.322+0800: [GC (Allocation Failure) 2021-01-22T17:34:48.322+0800: [DefNew: 284329K->4713K(314560K), 0.0056796 secs] 311412K->31796K(1013632K), 0.0061116 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]
+
+Requests per second:    3471.52 [#/sec]
+
+
+
+
+java -jar -Xmx1g -Xms1g  -XX:+UseG1GC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:-UseAdaptiveSizePolicy .\gateway-server-0.0.1-SNAPSHOT.jar
+ [Parallel Time: 2.7 ms, GC Workers: 8]
+      [GC Worker Start (ms): Min: 639.5, Avg: 639.5, Max: 639.9, Diff: 0.5]
+      [Ext Root Scanning (ms): Min: 0.0, Avg: 0.3, Max: 0.9, Diff: 0.9, Sum: 2.3]
+      [Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+         [Processed Buffers: Min: 0, Avg: 0.0, Max: 0, Diff: 0, Sum: 0]
+      [Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 0.2, Max: 1.0, Diff: 1.0, Sum: 1.5]
+      [Object Copy (ms): Min: 1.3, Avg: 2.0, Max: 2.2, Diff: 1.0, Sum: 15.7]
+      [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+         [Termination Attempts: Min: 1, Avg: 37.8, Max: 48, Diff: 47, Sum: 302]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.2]
+      [GC Worker Total (ms): Min: 2.1, Avg: 2.5, Max: 2.6, Diff: 0.5, Sum: 19.9]
+      [GC Worker End (ms): Min: 642.0, Avg: 642.0, Max: 642.0, Diff: 0.0]
+   [Code Root Fixup: 0.0 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 0.1 ms]
+   [Other: 2.3 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 1.7 ms]
+      [Ref Enq: 0.0 ms]
+      [Redirty Cards: 0.1 ms]
+      [Humongous Register: 0.0 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.1 ms]
+   [Eden: 51.0M(51.0M)->0.0B(57.0M) Survivors: 0.0B->5120.0K Heap: 51.0M(1024.0M)->4398.1K(1024.0M)]
+ [Times: user=0.05 sys=0.00, real=0.03 secs]
+2021-01-22T17:37:33.852+0800: [GC pause (G1 Evacuation Pause) (young), 0.0062414 secs]
+   [Parallel Time: 3.5 ms, GC Workers: 8]
+      [GC Worker Start (ms): Min: 882.6, Avg: 882.7, Max: 882.7, Diff: 0.1]
+      [Ext Root Scanning (ms): Min: 0.1, Avg: 0.4, Max: 1.6, Diff: 1.5, Sum: 3.0]
+      [Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+         [Processed Buffers: Min: 0, Avg: 0.0, Max: 0, Diff: 0, Sum: 0]
+      [Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 0.1, Max: 1.0, Diff: 1.0, Sum: 1.2]
+      [Object Copy (ms): Min: 1.8, Avg: 2.8, Max: 3.2, Diff: 1.4, Sum: 22.7]
+      [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+         [Termination Attempts: Min: 1, Avg: 63.5, Max: 78, Diff: 77, Sum: 508]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.2]
+      [GC Worker Total (ms): Min: 3.4, Avg: 3.4, Max: 3.5, Diff: 0.1, Sum: 27.2]
+      [GC Worker End (ms): Min: 886.0, Avg: 886.0, Max: 886.1, Diff: 0.0]
+   [Code Root Fixup: 0.0 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 0.1 ms]
+   [Other: 2.6 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 1.8 ms]
+      [Ref Enq: 0.0 ms]
+      [Redirty Cards: 0.1 ms]
+      [Humongous Register: 0.0 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.1 ms]
+   [Eden: 57.0M(57.0M)->0.0B(357.0M) Survivors: 5120.0K->8192.0K Heap: 61.3M(1024.0M)->9021.5K(1024.0M)]
+ [Times: user=0.06 sys=0.00, real=0.03 secs]
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.0.4.RELEASE)
+
+2021-01-22T17:37:34.372+0800: [GC pause (Metadata GC Threshold) (young) (initial-mark), 0.0151514 secs]
+   [Parallel Time: 8.0 ms, GC Workers: 8]
+      [GC Worker Start (ms): Min: 1403.3, Avg: 1403.5, Max: 1403.8, Diff: 0.5]
+      [Ext Root Scanning (ms): Min: 2.6, Avg: 2.9, Max: 3.1, Diff: 0.6, Sum: 22.9]
+      [Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.1, Diff: 0.1, Sum: 0.1]
+         [Processed Buffers: Min: 0, Avg: 0.1, Max: 1, Diff: 1, Sum: 1]
+      [Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 0.8, Max: 1.8, Diff: 1.8, Sum: 6.1]
+      [Object Copy (ms): Min: 3.0, Avg: 4.1, Max: 5.0, Diff: 2.0, Sum: 32.9]
+      [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+         [Termination Attempts: Min: 1, Avg: 42.6, Max: 60, Diff: 59, Sum: 341]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.2]
+      [GC Worker Total (ms): Min: 7.4, Avg: 7.8, Max: 7.9, Diff: 0.5, Sum: 62.4]
+      [GC Worker End (ms): Min: 1411.3, Avg: 1411.3, Max: 1411.3, Diff: 0.0]
+   [Code Root Fixup: 0.1 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 0.1 ms]
+   [Other: 7.0 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 5.5 ms]
+      [Ref Enq: 0.0 ms]
+      [Redirty Cards: 0.1 ms]
+      [Humongous Register: 0.0 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.1 ms]
+   [Eden: 125.0M(357.0M)->0.0B(601.0M) Survivors: 8192.0K->13.0M Heap: 133.8M(1024.0M)->13.3M(1024.0M)]
+ [Times: user=0.03 sys=0.00, real=0.04 secs]
+2021-01-22T17:37:34.420+0800: [GC concurrent-root-region-scan-start]
+2021-01-22T17:37:34.430+0800: [GC concurrent-root-region-scan-end, 0.0092308 secs]
+2021-01-22T17:37:34.430+0800: [GC concurrent-mark-start]
+2021-01-22T17:37:34.431+0800: [GC concurrent-mark-end, 0.0015127 secs]
+2021-01-22T17:37:34.441+0800: [GC remark 2021-01-22T17:37:34.447+0800: [Finalize Marking, 0.0002189 secs] 2021-01-22T17:37:34.447+0800: [GC ref-proc, 0.0004507 secs] 2021-01-22T17:37:34.448+0800: [Unloading, 0.0026719 secs], 0.0102136 secs]
+ [Times: user=0.11 sys=0.00, real=0.01 secs]
+2021-01-22T17:37:34.451+0800: [GC cleanup 15M->14M(1024M), 0.0017791 secs]
+ [Times: user=0.00 sys=0.00, real=0.00 secs]
+2021-01-22T17:37:34.461+0800: [GC concurrent-cleanup-start]
+2021-01-22T17:37:34.462+0800: [GC concurrent-cleanup-end, 0.0007616 secs]
+2021-01-22T17:37:52.250+0800: [GC pause (Metadata GC Threshold) (young) (initial-mark), 0.0210444 secs]
+   [Parallel Time: 13.1 ms, GC Workers: 8]
+      [GC Worker Start (ms): Min: 19283.4, Avg: 19283.5, Max: 19283.6, Diff: 0.2]
+      [Ext Root Scanning (ms): Min: 1.3, Avg: 1.5, Max: 2.0, Diff: 0.7, Sum: 12.2]
+      [Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+         [Processed Buffers: Min: 0, Avg: 0.1, Max: 1, Diff: 1, Sum: 1]
+      [Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.3]
+      [Code Root Scanning (ms): Min: 0.3, Avg: 0.8, Max: 1.7, Diff: 1.4, Sum: 6.5]
+      [Object Copy (ms): Min: 9.2, Avg: 10.5, Max: 11.1, Diff: 1.9, Sum: 83.7]
+      [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+         [Termination Attempts: Min: 1, Avg: 21.9, Max: 30, Diff: 29, Sum: 175]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.1, Diff: 0.1, Sum: 0.3]
+      [GC Worker Total (ms): Min: 12.8, Avg: 12.9, Max: 13.0, Diff: 0.2, Sum: 103.1]
+      [GC Worker End (ms): Min: 19296.4, Avg: 19296.4, Max: 19296.4, Diff: 0.0]
+   [Code Root Fixup: 0.2 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 0.3 ms]
+   [Other: 7.4 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 4.6 ms]
+      [Ref Enq: 0.0 ms]
+      [Redirty Cards: 0.2 ms]
+      [Humongous Register: 0.0 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.4 ms]
+   [Eden: 395.0M(601.0M)->0.0B(588.0M) Survivors: 13.0M->26.0M Heap: 407.5M(1024.0M)->26.0M(1024.0M)]
+ [Times: user=0.09 sys=0.02, real=0.04 secs]
+2021-01-22T17:37:52.294+0800: [GC concurrent-root-region-scan-start]
+2021-01-22T17:37:52.309+0800: [GC concurrent-root-region-scan-end, 0.0156167 secs]
+2021-01-22T17:37:52.310+0800: [GC concurrent-mark-start]
+2021-01-22T17:37:52.313+0800: [GC concurrent-mark-end, 0.0030519 secs]
+2021-01-22T17:37:52.317+0800: [GC remark 2021-01-22T17:37:52.318+0800: [Finalize Marking, 0.0005356 secs] 2021-01-22T17:37:52.319+0800: [GC ref-proc, 0.0017030 secs] 2021-01-22T17:37:52.320+0800: [Unloading, 0.0041462 secs], 0.0083419 secs]
+ [Times: user=0.01 sys=0.00, real=0.01 secs]
+2021-01-22T17:37:52.331+0800: [GC cleanup 27M->27M(1024M), 0.0016334 secs]
+ [Times: user=0.00 sys=0.00, real=0.00 secs]
+2021-01-22T17:37:59.177+0800: [GC pause (G1 Evacuation Pause) (young), 0.0191926 secs]
+   [Parallel Time: 16.2 ms, GC Workers: 8]
+      [GC Worker Start (ms): Min: 26208.4, Avg: 26208.5, Max: 26208.5, Diff: 0.1]
+      [Ext Root Scanning (ms): Min: 0.3, Avg: 0.9, Max: 3.5, Diff: 3.2, Sum: 7.2]
+      [Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+         [Processed Buffers: Min: 0, Avg: 0.0, Max: 0, Diff: 0, Sum: 0]
+      [Scan RS (ms): Min: 0.0, Avg: 0.1, Max: 0.1, Diff: 0.1, Sum: 0.5]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 1.8, Max: 3.8, Diff: 3.8, Sum: 14.2]
+      [Object Copy (ms): Min: 11.6, Avg: 13.2, Max: 14.9, Diff: 3.3, Sum: 105.8]
+      [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.2]
+         [Termination Attempts: Min: 1, Avg: 207.9, Max: 265, Diff: 264, Sum: 1663]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.1, Diff: 0.1, Sum: 0.3]
+      [GC Worker Total (ms): Min: 16.0, Avg: 16.0, Max: 16.1, Diff: 0.1, Sum: 128.2]
+      [GC Worker End (ms): Min: 26224.5, Avg: 26224.5, Max: 26224.5, Diff: 0.0]
+   [Code Root Fixup: 0.4 ms]
+   [Code Root Purge: 0.1 ms]
+   [Clear CT: 0.2 ms]
+   [Other: 2.3 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 1.0 ms]
+      [Ref Enq: 0.0 ms]
+      [Redirty Cards: 0.1 ms]
+      [Humongous Register: 0.0 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.5 ms]
+   [Eden: 588.0M(588.0M)->0.0B(590.0M) Survivors: 26.0M->24.0M Heap: 614.0M(1024.0M)->23.5M(1024.0M)]
+ [Times: user=0.11 sys=0.02, real=0.05 secs]
+2021-01-22T17:38:04.123+0800: [GC pause (G1 Evacuation Pause) (young), 0.0159739 secs]
+   [Parallel Time: 13.6 ms, GC Workers: 8]
+      [GC Worker Start (ms): Min: 31153.7, Avg: 31153.7, Max: 31153.8, Diff: 0.1]
+      [Ext Root Scanning (ms): Min: 0.2, Avg: 0.7, Max: 3.0, Diff: 2.8, Sum: 5.8]
+      [Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+         [Processed Buffers: Min: 0, Avg: 0.0, Max: 0, Diff: 0, Sum: 0]
+      [Scan RS (ms): Min: 0.0, Avg: 0.1, Max: 0.1, Diff: 0.1, Sum: 0.5]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 1.3, Max: 2.7, Diff: 2.7, Sum: 10.1]
+      [Object Copy (ms): Min: 10.0, Avg: 11.1, Max: 12.8, Diff: 2.8, Sum: 89.0]
+      [Termination (ms): Min: 0.0, Avg: 0.2, Max: 0.3, Diff: 0.3, Sum: 1.7]
+         [Termination Attempts: Min: 1, Avg: 152.6, Max: 195, Diff: 194, Sum: 1221]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+      [GC Worker Total (ms): Min: 13.4, Avg: 13.4, Max: 13.5, Diff: 0.1, Sum: 107.2]
+      [GC Worker End (ms): Min: 31167.1, Avg: 31167.1, Max: 31167.2, Diff: 0.1]
+   [Code Root Fixup: 0.3 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 0.2 ms]
+   [Other: 1.8 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 0.5 ms]
+      [Ref Enq: 0.0 ms]
+      [Redirty Cards: 0.1 ms]
+      [Humongous Register: 0.0 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.7 ms]
+   [Eden: 590.0M(590.0M)->0.0B(590.0M) Survivors: 24.0M->24.0M Heap: 613.5M(1024.0M)->23.5M(1024.0M)]
+ [Times: user=0.02 sys=0.00, real=0.04 secs]
+
+Requests per second:    3591.17 [#/sec]
+
+java -jar -Xmx1g -Xms1g  -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:-UseAdaptiveSizePolicy .\gateway-server-0.0.1-SNAPSHOT.jar
+
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.0.4.RELEASE)
+
+2021-01-22T17:40:32.379+0800: [GC (Metadata GC Threshold) [PSYoungGen: 251667K->15606K(305664K)] 251667K->15649K(1005056K), 0.0134576 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
+2021-01-22T17:40:32.393+0800: [Full GC (Metadata GC Threshold) [PSYoungGen: 15606K->0K(305664K)] [ParOldGen: 43K->14815K(699392K)] 15649K->14815K(1005056K), [Metaspace: 20513K->20513K(1067008K)], 0.0284682 secs] [Times: user=0.02 sys=0.00, real=0.03 secs]
+2021-01-22T17:40:34.581+0800: [GC (Allocation Failure) [PSYoungGen: 262144K->15894K(305664K)] 276959K->30781K(1005056K), 0.0117100 secs] [Times: user=0.03 sys=0.00, real=0.01 secs]
+2021-01-22T17:40:37.543+0800: [GC (Metadata GC Threshold) [PSYoungGen: 177327K->13418K(305664K)] 192214K->28313K(1005056K), 0.0093876 secs] [Times: user=0.11 sys=0.00, real=0.01 secs]
+2021-01-22T17:40:37.553+0800: [Full GC (Metadata GC Threshold) [PSYoungGen: 13418K->0K(305664K)] [ParOldGen: 14895K->18242K(699392K)] 28313K->18242K(1005056K), [Metaspace: 33846K->33846K(1079296K)], 0.0440636 secs] [Times: user=0.13 sys=0.00, real=0.04 secs]
+2021-01-22T17:40:40.558+0800: [GC (Allocation Failure) [PSYoungGen: 262144K->5891K(305664K)] 280386K->24142K(1005056K), 0.0046911 secs] [Times: user=0.08 sys=0.00, real=0.00 secs]
+2021-01-22T17:40:43.285+0800: [GC (Allocation Failure) [PSYoungGen: 268035K->5409K(305664K)] 286286K->23668K(1005056K), 0.0047072 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+2021-01-22T17:40:45.479+0800: [GC (Allocation Failure) [PSYoungGen: 267553K->5393K(305664K)] 285812K->23659K(1005056K), 0.0045074 secs] [Times: user=0.02 sys=0.00, real=0.00 secs]
+2021-01-22T17:40:47.600+0800: [GC (Allocation Failure) [PSYoungGen: 267537K->5409K(305664K)] 285803K->23684K(1005056K), 0.0039879 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+2021-01-22T17:40:50.220+0800: [GC (Allocation Failure) [PSYoungGen: 267553K->5313K(305664K)] 285828K->23596K(1005056K), 0.0047709 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+
+Requests per second:    3420.48 [#/sec]
